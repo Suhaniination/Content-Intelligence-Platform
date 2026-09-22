@@ -153,9 +153,9 @@ Return ONLY a valid JSON object with these exact keys:
 Return ONLY the JSON. No explanation, no markdown, no extra text."""
 
 def run_ai_transform_all(text: str) -> dict:
-    "\""
+    """
     Run full AI transformation on the given text to get summary, faq, and social media post in one shot.
-    "\""
+    """
     messages = [
         {"role": "system", "content": TRANSFORM_ALL_SYSTEM},
         {"role": "user", "content": f"Content to transform:\n\n{text[:8000]}"},

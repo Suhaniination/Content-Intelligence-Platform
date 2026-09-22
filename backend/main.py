@@ -173,7 +173,7 @@ def delete_tag(tag_id: int, db: Session = Depends(get_db)):
 def health():
     return {"status": "ok"}
 
-@app.post(/"ai/transform-all/{content_id}/", tags=["AI"])
+@app.post("/ai/transform-all/{content_id}/", tags=["AI"])
 def transform_all_content_route(content_id: int, db: Session = Depends(get_db)):
     from .ai import run_ai_transform_all
     content = crud.get_content(db, content_id)
