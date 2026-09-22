@@ -1,153 +1,72 @@
-# 🧠 Content Intelligence Platform
+# Content Intelligence Platform
 
-AI-powered hackathon MVP for content analysis and transformation. Paste content → get AI summaries, keywords, topics, tags → transform to FAQ, social posts, email summaries, and press releases.
+A lightweight, AI-assisted web application that accelerates content marketing workflows. This platform allows teams to paste long-form content (articles, reports, announcements) and instantly extract insights (summaries, keywords, topics) or repurpose the text into alternate formats (FAQs, social media posts, emails, press releases) using Generative AI.
 
----
+**[Read the Full Project Report PDF included in this repository](Project_Report_Content_Intelligence.pdf)**
 
-## Tech Stack
+## 🚀 Features
 
-| Layer | Tech |
-|-------|------|
-| Frontend | Streamlit |
-| Backend API | FastAPI + Uvicorn |
-| AI | Groq (`llama-3.1-8b-instant`) / OpenAI (`gpt-4o-mini`) |
-| Database | SQLite (via SQLAlchemy) |
+- **Instant AI Analysis:** Generate summaries, key points, topics, keywords, and suggested tags in a single pass.
+- **Content Transformation:** Repurpose source text into Social Media Posts, FAQs, Email Summaries, and Press Releases.
+- **Human-in-the-Loop (HITL):** AI outputs are generated as previews. Users must review and edit the text before saving to the database.
+- **Non-Destructive Processing:** The original source text is kept immutable and separate from generated derivative content.
+- **Fast & Lightweight:** Built using Streamlit, FastAPI, and SQLite.
 
----
+## 🛠️ Tech Stack
 
-## Project Structure
+- **Frontend:** Streamlit (Python)
+- **Backend:** FastAPI (Python)
+- **Database:** SQLite & SQLAlchemy (ORM)
+- **AI Integration:** Groq API (`qwen/qwen3.8-27b`) for ultra-low latency inference
 
-```
-Hackathon Project/
-├── backend/
-│   ├── __init__.py
-│   ├── database.py   # SQLAlchemy engine & session
-│   ├── models.py     # ORM: User, Content, GeneratedOutput, Tag
-│   ├── schemas.py    # Pydantic schemas
-│   ├── crud.py       # Database operations
-│   ├── ai.py         # Groq/OpenAI integration
-│   └── main.py       # FastAPI routes
-├── frontend/
-│   └── app.py        # Streamlit UI (all 6 screens)
-├── .env.example      # Environment variable template
-├── requirements.txt
-└── README.md
-```
+## 💻 How to Run Locally
 
----
-
-## Quick Start
-
-### 1. Install dependencies
-
+### 1. Setup Environment
+Ensure you have Python 3.12+ installed.
 ```bash
+# Clone the repository
+git clone https://github.com/Suhaniination/Content-Intelligence-Platform.git
+cd Content-Intelligence-Platform
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-### 2. Configure environment
-
-```bash
-# Copy the template
-copy .env.example .env
-
-# Edit .env and add your Groq API key:
-# GROQ_API_KEY=gsk_your_actual_key_here
+### 2. Configure API Keys
+Create a `.env` file in the root directory and add your Groq API key:
+```env
+AI_PROVIDER=groq
+GROQ_API_KEY=gsk_your_api_key_here
+GROQ_MODEL=qwen/qwen3.8-27b
 ```
 
-Get a free Groq API key at: https://console.groq.com
-
-### 3. Start the backend (Terminal 1)
-
+### 3. Start the Backend
+Open a terminal and start the FastAPI server:
 ```bash
 uvicorn backend.main:app --reload
 ```
+The API will run at `http://localhost:8000` (Docs available at `http://localhost:8000/docs`).
 
-The API will be available at: http://localhost:8000  
-Interactive docs: http://localhost:8000/docs
-
-### 4. Start the frontend (Terminal 2)
-
+### 4. Start the Frontend
+Open a second terminal and start the Streamlit UI:
 ```bash
 streamlit run frontend/app.py
 ```
+The web app will open automatically at `http://localhost:8501`.
 
-The app will open at: http://localhost:8501
-
----
-
-## User Flow
+## 📁 Repository Structure
 
 ```
-Enter username (sidebar)
-    ↓
-📝 New Content  →  paste text + title  →  Save
-    ↓
-🤖 AI Processing  →  Run Analysis  →  Preview results
-    ↓
-✏️ Review & Edit  →  Edit fields  →  Save to DB
-    ↓
-🔄 Transform  →  Choose format  →  Generate  →  Edit  →  Save
-    ↓
-📚 Content History  →  Browse all saved content
-🔍 Content Detail   →  View everything in one place
+├── backend/
+│   ├── ai.py         # LLM prompting and API integration
+│   ├── crud.py       # Database operations
+│   ├── database.py   # SQLite connection
+│   ├── main.py       # FastAPI routing
+│   ├── models.py     # SQLAlchemy models
+│   └── schemas.py    # Pydantic validation schemas
+├── frontend/
+│   └── app.py        # Streamlit multi-page interface
+├── Project_Report_Content_Intelligence.pdf # Detailed Architecture & Approach
+├── requirements.txt  # Python dependencies
+└── README.md         
 ```
-
----
-
-## API Endpoints
-
-| Method | Route | Description |
-|--------|-------|-------------|
-| POST | `/users` | Create or get user by name |
-| GET | `/users` | List all users |
-| POST | `/content` | Save new content |
-| GET | `/content/user/{user_id}` | List user's content |
-| GET | `/content/item/{id}` | Get content + outputs + tags |
-| DELETE | `/content/{id}` | Delete content |
-| POST | `/ai/analyze/{content_id}` | Run AI analysis (no auto-save) |
-| POST | `/ai/transform/{content_id}` | Transform to format (no auto-save) |
-| POST | `/outputs/{content_id}` | Batch-save outputs |
-| PUT | `/outputs/{output_id}` | Edit a saved output |
-| POST | `/tags/{content_id}` | Add tag |
-| DELETE | `/tags/{tag_id}` | Delete tag |
-
----
-
-## Transform Formats
-
-| Format Key | Description |
-|------------|-------------|
-| `faq` | 5-7 Q&A pairs |
-| `social_post` | LinkedIn/Twitter-style post with hashtags |
-| `email_summary` | Subject + bullet takeaways + closing |
-| `press_release` | 2-3 paragraph PR blurb |
-
----
-
-## Switching to OpenAI
-
-Edit `.env`:
-```
-AI_PROVIDER=openai
-OPENAI_API_KEY=sk-your_key_here
-OPENAI_MODEL=gpt-4o-mini
-```
-
----
-
-## Database
-
-SQLite file is created automatically at `content_intel.db` in the project root on first run. No migrations needed — tables are created on startup.
-
----
-
-## MVP Screens
-
-| Screen | Purpose |
-|--------|---------|
-| 📝 New Content | Input + save |
-| 📚 Content History | Browse + delete |
-| 🔍 Content Detail | View all data |
-| 🤖 AI Processing | Trigger + preview |
-| ✏️ Review & Edit | Edit + save outputs |
-| 🔄 Transform | Format conversion |
